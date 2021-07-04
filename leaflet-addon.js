@@ -1,7 +1,7 @@
 
 // On initialise la carte
 var map = L.map( 'map', {
-    center: [46.535, 6.60],
+    center: [46.655, 6.60],
     maxZoom: 18,
     minZoom: 2,
     zoom: 9});
