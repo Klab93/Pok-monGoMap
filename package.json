@@ -1,0 +1,23 @@
+{
+  "name": "pokemongomap",
+  "version": "0.0.1",
+  "description": "A swiss map",
+  "main": "js/scripts.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AliceThunderWind/Pok-monGoMap.git"
+  },
+  "author": "AliceThunderWind",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AliceThunderWind/Pok-monGoMap/issues"
+  },
+  "homepage": "https://github.com/AliceThunderWind/Pok-monGoMap#readme",
+  "dependencies": {
+    "leaflet": "^1.7.1",
+    "leaflet-search": "^2.9.9"
+  }
+}
