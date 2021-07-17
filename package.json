@@ -18,6 +18,8 @@
   "homepage": "https://github.com/AliceThunderWind/Pok-monGoMap#readme",
   "dependencies": {
     "leaflet": "^1.7.1",
-    "leaflet-search": "^2.9.9"
+    "leaflet-search": "^2.9.9",
+    "leaflet-tag-filter-button": "0.0.5",
+    "s2-geometry": "^1.2.10"
   }
 }
