@@ -175,8 +175,9 @@ for ( i in markers ) {
     }
     marker = new L.marker( [markers[i].lat, markers[i].lng], {name : markers[i].name, icon: icon, tags: tag} )
 
+    L.DomEvent.disableClickPropagation(div);
     marker.bindPopup( '<a href="http://www.openstreetmap.org/?mlat=' + markers[i].lat + '&mlon=' + markers[i].lng +'&zoom=16&#map=16/'
-    + markers[i].lat + '/' + markers[i].lng + '" target="_blank">' + markers[i].name + '</a>' ).openPopup();
+    + markers[i].lat + '/' + markers[i].lng + '" target="_blank">' + markers[i].name + '</a>' );
     clusterGroup.addLayer(marker);
 
 }
