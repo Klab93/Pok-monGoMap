@@ -129,7 +129,6 @@ function setLayer() {
 // Fullscreen functionality
 map.addControl(new L.Control.Fullscreen({
     position:'topright',		
-
 }));
 
 // Fonctionnalité des Clusters
@@ -178,7 +177,7 @@ for ( i in markers ) {
     marker = new L.marker( [markers[i].lat, markers[i].lng], {name : markers[i].name, icon: icon, tags: tag} )
 
     marker.bindPopup( '<a href="http://www.openstreetmap.org/?mlat=' + markers[i].lat + '&mlon=' + markers[i].lng +'&zoom=16&#map=16/'
-    + markers[i].lat + '/' + markers[i].lng + '" target="_blank">' + markers[i].name + '</a>' );
+    + markers[i].lat + '/' + markers[i].lng + '" target="_blank">' + markers[i].name + '</a>' ).openPopup();
     clusterGroup.addLayer(marker);
 
 }
@@ -203,4 +202,4 @@ var controlSearch = new L.Control.Search({
 
 map.addControl( controlSearch );
 
-setInterval(setLayer, 2000);
+setInterval(setLayer, 1000);

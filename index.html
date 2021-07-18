@@ -5,12 +5,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
+
         <title>Pokémon GO Map - Suisse romande</title>
+
         <!-- Favicon-->
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="css/styles.css" rel="stylesheet" />
-       
 
         <!-- Leaflet CSS -->
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
@@ -27,23 +29,26 @@
         <!-- tagFlterButton Plugin CSS-->
         <link rel="stylesheet" href="./node_modules/leaflet-tag-filter-button/src/leaflet-tag-filter-button.css">
 
+        <!-- Fullscreen Plugin CSS -->
         <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
 
+        <!-- Mapbox layout CSS-->
         <link href="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css" rel="stylesheet">
         
-        
+        <!-- Search Plugin CSS-->
         <link rel="stylesheet" href="./node_modules/leaflet-search/src/leaflet-search.css" />
 
-        <!-- CSS -->
+        <!-- CSS webpage-->
         <style>
 
-            body{
+            body {
             padding: 0;
             margin: 0;
-        }
+            }
             html, body, #map {
-            height: calc(100% - 19px);
-            width: 100%; position: absolute !important;
+            height: calc(100% - 18.6px);
+            width: 100%; 
+            position: absolute !important;
             }
 
             .easy-button-button {
@@ -55,6 +60,7 @@
             }
         </style>
     </head>
+
     <body>
         <!-- Responsive navbar-->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -84,6 +90,7 @@
         </div>
         <!--Fichiers Javascript-->
 
+        <!-- S2 Geometry JS-->
         <script src="./node_modules/s2-geometry/src/s2geometry.js"></script>
 
         <!-- Bootstrap core JS-->
@@ -107,15 +114,15 @@
         <!-- Fullscreen Plugin JS-->
         <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
         
+        <!-- Search Plugin JS -->
         <script src='./node_modules/leaflet-search/src/leaflet-search.js'></script>
 
+        <!-- Mapbox layout JS -->
         <script src="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js"></script>
-
 
         <!-- My JS Feature-->
         <script type='text/javascript' src='js/jsonFile.json'></script>
         <script type='text/javascript' src='js/markers.js'></script>
         <script src="js/scripts.js"></script>
-
     </body>
 </html>
