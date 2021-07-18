@@ -9,7 +9,9 @@
 // Initializing the map
 var map = L.map( 'map', {
     center: [46.655, 6.60],
-    zoom: 9});
+    zoom: 9,
+    tap : false
+});
 
 // Loading tiles & mentioning attributions
 L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
@@ -202,4 +204,5 @@ var controlSearch = new L.Control.Search({
 
 map.addControl( controlSearch );
 
-setInterval(setLayer, 1000);
+
+setInterval(setLayer, 1500);
