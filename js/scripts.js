@@ -6,7 +6,6 @@
 
  // --------------------------------------- Initializing ---------------------------------------
 
-
 // Initializing the map
 var map = L.map( 'map', {
     center: [46.655, 6.60],
@@ -128,7 +127,10 @@ function setLayer() {
 }
 
 // Fullscreen functionality
-map.addControl(new L.Control.Fullscreen());
+map.addControl(new L.Control.Fullscreen({
+    position:'topright',		
+
+}));
 
 // Fonctionnalité des Clusters
 var clusterGroup = L.markerClusterGroup( {
