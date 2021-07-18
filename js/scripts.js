@@ -26,7 +26,6 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 }).addTo(map);
 
 
-
 // --------------------------------------- Addons ---------------------------------------
 
 // Cells mechanisms
@@ -204,5 +203,7 @@ var controlSearch = new L.Control.Search({
 
 map.addControl( controlSearch );
 
+map.dragging.disable();
+map.tap.disable()
 
 setInterval(setLayer, 1500);
