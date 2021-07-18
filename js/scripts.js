@@ -203,7 +203,7 @@ var controlSearch = new L.Control.Search({
 
 map.addControl( controlSearch );
 
-map.dragging.disable();
 map.tap.disable()
+
 
 setInterval(setLayer, 1500);
