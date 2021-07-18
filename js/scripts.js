@@ -135,7 +135,6 @@ map.addControl(new L.Control.Fullscreen({
 // Fonctionnalité des Clusters
 var markers = L.markerClusterGroup( {
     disableClusteringAtZoom:16
-    
 });
 
 function changeClustering() {
@@ -166,11 +165,11 @@ function onEachFeature(feature, layer) {
     var lat = feature.geometry.coordinates[1];
     var lng = feature.geometry.coordinates[0];
 
-    layer.bindPopup( '<b>' + feature.properties.typePOI+ '</b><br> '+'<a href="http://www.openstreetmap.org/?mlat=' + lat + '&mlon=' + lng +'&zoom=16&#map=16/'
+    layer.bindPopup('<b>' + feature.properties.typePOI+ '</b><br> '+'<a href="http://www.openstreetmap.org/?mlat=' + lat + '&mlon=' + lng +'&zoom=16&#map=16/'
     + lat + '/' + lng + '" target="_blank">' + feature.properties.title + '</a>' ).openPopup();
 }
 
-var pokestopGeoJson = L.geoJson(pokestopList, {
+var pokestopGeoJson = L.geoJson(pokestopsList, {
     onEachFeature: onEachFeature,
     pointToLayer: function(feature, latlng) {
         return L.marker(latlng, {icon: pokestopIcon, tags : ["Pokéstop"]});
@@ -203,14 +202,17 @@ L.control.tagFilterButton({
     }).addTo(map);
 
 // search option
-var controlSearch = new L.Control.Search({
-    position:'topright',		
-    layer: markers,
-    initial: false,
-    zoom: 17,
-    marker: false
-});
-map.addControl( controlSearch );
+var searchControl = new L.Control.Search(
+    {
+        position:'topright',
+        layer: markers,
+        initial: false,
+        zoom: 17,
+        marker: false});
+
+
+map.addControl( searchControl );  //inizialize search control
+
 
 setInterval(setLayer, 1000);
 
