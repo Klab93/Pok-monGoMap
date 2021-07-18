@@ -36,6 +36,7 @@ function getCells(level, colour, boundUp, boundLeft) {
     var key = S2.latLngToKey(getCorner.lat, getCorner.lng, level);
     var key2 = S2.latLngToKey(getCorner.lat, getCorner.lng, level);
 
+    console.log("hi");
     var polyLayers = [];
 
     for(let i = 0; i < boundUp; ++i) {
@@ -119,7 +120,6 @@ function checkZoom(layer, cellZoom, color, heightCells, widthCells, isCoordDiffe
 function setLayer() {
     
     if(previousCoords.lat != map.getBounds().getNorthWest().lat || previousCoords.lng != map.getBounds().getNorthWest().lng) {
-
         checkZoom(14, 14, 'red', 15, 25);
         checkZoom(17, 16, 'green', 25, 50);
 
@@ -133,15 +133,16 @@ map.addControl(new L.Control.Fullscreen({
 }));
 
 // Fonctionnalité des Clusters
-var clusterGroup = L.markerClusterGroup( {
+var markers = L.markerClusterGroup( {
     disableClusteringAtZoom:16
+    
 });
 
 function changeClustering() {
     if (map.getZoom() >= disableClusteringAtZoom) {
-        clusterGroup.disableClustering(); // New method from sub-plugin.
+        markers.disableClustering(); // New method from sub-plugin.
     } else {
-        clusterGroup.enableClustering(); // New method from sub-plugin.
+        markers.enableClustering(); // New method from sub-plugin.
     }
 };
 
@@ -154,56 +155,63 @@ var MyOwnIcon = L.Icon.extend({
     }
 });
 
-var iconStop = new MyOwnIcon( {
-iconUrl: 'images/map_marker_stop.png'}),
-    iconGym = new MyOwnIcon( {
-iconUrl: 'images/map_marker_default_01.png'}),
-    iconEX = new MyOwnIcon({
-iconUrl: 'images/map_marker_default_ex_03.png'});
+var pokestopIcon = new MyOwnIcon({
+        iconUrl: 'images/map_marker_stop.png'}),
+    gymIcon = new MyOwnIcon( {
+        iconUrl: 'images/map_marker_default_01.png'}),
+    gymExIcon = new MyOwnIcon({
+        iconUrl: 'images/map_marker_default_ex_03.png'});
 
-//On crée le marqueur et lui attribue une popup
-for ( i in markers ) {
-    var marker, icon, tag;
+function onEachFeature(feature, layer) {
+    var lat = feature.geometry.coordinates[1];
+    var lng = feature.geometry.coordinates[0];
 
-    if(markers[i].type === "pokestop") {
-        tag = ['pokestop'];
-        icon = iconStop;
-    } else if (markers[i].type === "gym") {
-        tag = ['arene'];
-        icon = iconGym;
-    } else if (markers[i].type === "gymEX") {
-        tag = ['areneEx'];
-        icon = iconEX;
-    }
-    marker = new L.marker( [markers[i].lat, markers[i].lng], {name : markers[i].name, icon: icon, tags: tag} )
-
-    marker.bindPopup( '<a href="http://www.openstreetmap.org/?mlat=' + markers[i].lat + '&mlon=' + markers[i].lng +'&zoom=16&#map=16/'
-    + markers[i].lat + '/' + markers[i].lng + '" target="_blank">' + markers[i].name + '</a>' ).openPopup();
-    clusterGroup.addLayer(marker);
-
+    layer.bindPopup( '<b>' + feature.properties.typePOI+ '</b><br> '+'<a href="http://www.openstreetmap.org/?mlat=' + lat + '&mlon=' + lng +'&zoom=16&#map=16/'
+    + lat + '/' + lng + '" target="_blank">' + feature.properties.title + '</a>' ).openPopup();
 }
-map.addLayer(clusterGroup);
+
+var pokestopGeoJson = L.geoJson(pokestopList, {
+    onEachFeature: onEachFeature,
+    pointToLayer: function(feature, latlng) {
+        return L.marker(latlng, {icon: pokestopIcon, tags : ["Pokéstop"]});
+    }
+})
+
+var gymGeoJson = L.geoJson(gymsList, {
+    onEachFeature: onEachFeature,
+    pointToLayer: function(feature, latlng) {
+        return L.marker(latlng, {icon: gymIcon, tags : ["Arène"]});
+    }
+})
+
+var gymExJson = L.geoJson(gymsEXList, {
+    onEachFeature: onEachFeature,
+    pointToLayer: function(feature, latlng) {
+        return L.marker(latlng, {icon: gymExIcon, tags : ["Arène EX"]});
+    }
+})
+
+markers.addLayer(pokestopGeoJson);
+markers.addLayer(gymGeoJson);
+markers.addLayer(gymExJson);
+map.addLayer(markers)
 
 // Filter option
 L.control.tagFilterButton({
-        data: ['pokestop', 'arene','areneEx','none'],
+        data: ['Pokéstop', 'Arène','Arène EX','none'],
         filterOnEveryClick: true
     }).addTo(map);
-
-
 
 // search option
 var controlSearch = new L.Control.Search({
     position:'topright',		
-    layer: clusterGroup,
+    layer: markers,
     initial: false,
-    zoom: 12,
+    zoom: 17,
     marker: false
 });
-
 map.addControl( controlSearch );
 
-map.tap.disable()
+setInterval(setLayer, 1000);
 
-
-setInterval(setLayer, 1500);
+map.tap.disable();
