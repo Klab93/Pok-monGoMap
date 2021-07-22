@@ -4,11 +4,11 @@
  * @brief Configuration of functionalities of the OpenStreetMap map
  */
 
- // --------------------------------------- Initializing ---------------------------------------
+// --------------------------------------- Initializing ---------------------------------------
 
 // Initializing the map
 var map = L.map( 'map', {
-    center: [46.655, 6.60],
+    center: [46.50, 7.15],
     zoom: 9,
     tap : false
 });
@@ -29,7 +29,6 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 // --------------------------------------- Addons ---------------------------------------
 
 // Cells mechanisms
-
 function getCells(level, colour, boundUp, boundLeft) {
     var getCorner = map.getBounds().getNorthWest();
 
@@ -68,7 +67,6 @@ function getCells(level, colour, boundUp, boundLeft) {
     return polyLayers;
 }
 
-
 var isLayered14 = false;
 var isLayered17 = false;
 var isCoordDifferent = false;
@@ -78,7 +76,6 @@ var previousCoords = {
 };
 var cellslvl14 = new L.FeatureGroup();
 var cellslvl17 = new L.FeatureGroup();
-
 
 function checkZoom(layer, cellZoom, color, heightCells, widthCells, isCoordDifferent) {
     var tempBool = (cellZoom == 14) ? isLayered14 : isLayered17;
@@ -118,7 +115,6 @@ function checkZoom(layer, cellZoom, color, heightCells, widthCells, isCoordDiffe
 }
 
 function setLayer() {
-    
     if(previousCoords.lat != map.getBounds().getNorthWest().lat || previousCoords.lng != map.getBounds().getNorthWest().lng) {
         checkZoom(14, 14, 'red', 15, 25);
         checkZoom(17, 16, 'green', 25, 50);
@@ -132,7 +128,7 @@ map.addControl(new L.Control.Fullscreen({
     position:'topright',		
 }));
 
-// Fonctionnalité des Clusters
+// Clusters functionality
 var markers = L.markerClusterGroup( {
     disableClusteringAtZoom:16
 });
@@ -145,7 +141,7 @@ function changeClustering() {
     }
 };
 
-//On preset nos icônes
+// Setting icons parameters
 var MyOwnIcon = L.Icon.extend({
     options: {
         iconSize: [29, 29],
@@ -161,14 +157,16 @@ var pokestopIcon = new MyOwnIcon({
     gymExIcon = new MyOwnIcon({
         iconUrl: 'images/map_marker_default_ex_03.png'});
 
+// Common function for popup info
 function onEachFeature(feature, layer) {
     var lat = feature.geometry.coordinates[1];
     var lng = feature.geometry.coordinates[0];
 
     layer.bindPopup('<b>' + feature.properties.typePOI+ '</b><br> '+'<a href="http://www.openstreetmap.org/?mlat=' + lat + '&mlon=' + lng +'&zoom=16&#map=16/'
-    + lat + '/' + lng + '" target="_blank">' + feature.properties.title + '</a>' ).openPopup();
+    + lat + '/' + lng + '" target="_blank">' + feature.properties.title + '</a>' );
 }
 
+// Fetching every pokestops from the geoJSON file and adding properties
 var pokestopGeoJson = L.geoJson(pokestopsList, {
     onEachFeature: onEachFeature,
     pointToLayer: function(feature, latlng) {
@@ -176,6 +174,7 @@ var pokestopGeoJson = L.geoJson(pokestopsList, {
     }
 })
 
+// Fetching every gym from the geoJSON file and adding properties
 var gymGeoJson = L.geoJson(gymsList, {
     onEachFeature: onEachFeature,
     pointToLayer: function(feature, latlng) {
@@ -183,6 +182,7 @@ var gymGeoJson = L.geoJson(gymsList, {
     }
 })
 
+// Fetching every EX gym from the geoJSON file and adding properties
 var gymExJson = L.geoJson(gymsEXList, {
     onEachFeature: onEachFeature,
     pointToLayer: function(feature, latlng) {
@@ -190,6 +190,7 @@ var gymExJson = L.geoJson(gymsEXList, {
     }
 })
 
+// Adding all layers to the map
 markers.addLayer(pokestopGeoJson);
 markers.addLayer(gymGeoJson);
 markers.addLayer(gymExJson);
@@ -201,19 +202,32 @@ L.control.tagFilterButton({
         filterOnEveryClick: true
     }).addTo(map);
 
-// search option
+// Search option
 var searchControl = new L.Control.Search(
-    {
-        position:'topright',
-        layer: markers,
-        initial: false,
-        zoom: 17,
-        marker: false});
+{
+    position:'topright',
+    layer: markers,
+    initial: false,
+    zoom: 17,
+    marker: false,
+    moveToLocation: function(latlng, map) {
+        console.log(latlng);
+          map.setView(latlng, 16);
+    }});
 
+searchControl.on('search:locationfound', function(e) {
+    e.layer.openPopup();
+}).on('search:collapsed', function(e) {
 
-map.addControl( searchControl );  //inizialize search control
+    featuresLayer.eachLayer(function(layer) {
+        featuresLayer.resetStyle(layer);
+    });	
+});
 
+map.addControl( searchControl );
 
+// Calling the function every second for the cells' mechanism
 setInterval(setLayer, 1000);
 
+// Prevent bug of popup on mobile
 map.tap.disable();
