@@ -210,7 +210,7 @@ var searchControl = new L.Control.Search(
     initial: false,
     zoom: 17,
     marker: false,
-    moveToLocation: function(latlng, map) {
+    moveToLocation: function(latlng, title, map) {
         console.log(latlng);
           map.setView(latlng, 16);
     }});
@@ -229,5 +229,5 @@ map.addControl( searchControl );
 // Calling the function every second for the cells' mechanism
 setInterval(setLayer, 1000);
 
-// Prevent bug of popup on mobile
+// Prevent bug of on mobile
 map.tap.disable();
