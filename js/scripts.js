@@ -155,18 +155,17 @@ function getCells(level, colour, boundUp, boundRight) {
             if(level == 14) {
                 var number = nbPOIinCells.get(keyToDown);
 
-
-                if (number === undefined || number > 20) {
-                    number = 0;
+                if (number === undefined) {
+                    number = 2;
                 } else if (number < 2) {
                     number = 2 - number;
                 } else if (number < 6) {
                     number = 6 - number;
                 } else if (number <= 20) {
                     number = 20 - number;
+                } else if (number > 20) {
+                    number = 0
                 }
-
-                
                 
                 polygon.bindTooltip('<b>'+ number.toString() + '</b>', {
                     permanent: true, 
