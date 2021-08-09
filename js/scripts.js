@@ -242,6 +242,37 @@ function checkMoved() {
     }
 }
 
+var refreshIntervalId;
+
+var animatedToggle = L.easyButton({
+    id: 'animated-marker-toggle',
+    //type: 'animate',
+    states: [{
+        stateName: 'add-markers',
+        icon: '<img src="./images/grid.png" style="width:20px">',
+        title: 'add some markers',
+        onClick: function(control) {
+            checkLayer(14, 14, 'red', 18, 28);
+            checkLayer(17, 16, 'green', 35, 55);
+            refreshIntervalId = setInterval(checkMoved, 1000);
+            control.state('remove-markers');
+        }
+    }, {
+        stateName: 'remove-markers',
+        title: 'remove markers',
+        icon: '<b>OFF</b>',
+        onClick: function(control) {
+            clearInterval(refreshIntervalId);
+            map.removeLayer(cellslvl14);
+            map.removeLayer(cellslvl17);
+            control.state('add-markers');
+        }
+    }]
+  });
+
+  animatedToggle.addTo(map);
+
+
 // Search option
 var searchControl = new L.Control.Search( {
     position:'topright',
@@ -263,7 +294,7 @@ searchControl.on('search:locationfound', function(e) {
 map.addControl( searchControl );
 
 // Calling the function every second for the cells' mechanism
-setInterval(checkMoved, 1000);
+//setInterval(checkMoved, 1000);
 
 // Prevent bug of on mobile
 map.tap.disable();
