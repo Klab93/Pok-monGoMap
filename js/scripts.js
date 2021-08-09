@@ -31,8 +31,97 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 //--                                   Addons / Nodes                                   --
 //----------------------------------------------------------------------------------------
 
+//--------------------------------------- Fullscreen -------------------------------------
+map.addControl(new L.Control.Fullscreen({
+    position:'topright',		
+}));
 
-//--------------------------------------- S2 Cells ---------------------------------------
+//--------------------------------------- Markers' clusters ------------------------------
+var markers = L.markerClusterGroup( {
+    disableClusteringAtZoom:16
+});
+
+function changeClustering() {
+    if (map.getZoom() >= disableClusteringAtZoom) {
+        markers.disableClustering(); // New method from sub-plugin.
+    } else {
+        markers.enableClustering(); // New method from sub-plugin.
+    }
+};
+
+// Setting icons parameters
+var MyOwnIcon = L.Icon.extend({
+    options: {
+        iconSize: [30, 30],
+        iconAnchor: [15, 25],
+        popupAnchor: [0, -30] //0,-14 // 4 -29
+    }
+});
+
+var pokestopIcon = new MyOwnIcon({
+        iconUrl: 'images/map_marker_stop.png'}),
+    gymIcon = new MyOwnIcon( {
+        iconUrl: 'images/map_marker_default_01.png'}),
+    gymExIcon = new MyOwnIcon({
+        iconUrl: 'images/map_marker_default_ex_03.png'});
+
+var nbPOIinCells = new Map();
+
+// Common function for popup info
+function onEachFeature(feature, layer) {
+    var lat = feature.geometry.coordinates[1];
+    var lng = feature.geometry.coordinates[0];
+
+    layer.bindPopup('<b>' + feature.properties.typePOI+ '</b><br> '+'<a href="http://www.openstreetmap.org/?mlat=' + lat + '&mlon=' + lng +'&zoom=16&#map=16/'
+    + lat + '/' + lng + '" target="_blank">' + feature.properties.title + '</a>' );
+
+    var it = S2.latLngToKey(lat,lng, 14);
+
+    
+    if(nbPOIinCells.has(it)) {
+        nbPOIinCells.set(it, nbPOIinCells.get(it) + 1);
+    } else {
+        nbPOIinCells.set(it, 1);
+    }
+}
+
+// Fetching every pokestops from the geoJSON file and adding properties
+var pokestopGeoJson = L.geoJson(pokestopsList, {
+    onEachFeature: onEachFeature,
+    pointToLayer: function(feature, latlng) {
+        return L.marker(latlng, {icon: pokestopIcon, tags : ["Pokéstop"]});
+    }
+})
+
+// Fetching every gym from the geoJSON file and adding properties
+var gymGeoJson = L.geoJson(gymsList, {
+    onEachFeature: onEachFeature,
+    pointToLayer: function(feature, latlng) {
+        return L.marker(latlng, {icon: gymIcon, tags : ["Arène"]});
+    }
+})
+
+// Fetching every EX gym from the geoJSON file and adding properties
+var gymExJson = L.geoJson(gymsEXList, {
+    onEachFeature: onEachFeature,
+    pointToLayer: function(feature, latlng) {
+        return L.marker(latlng, {icon: gymExIcon, tags : ["Arène EX"]});
+    }
+})
+
+// Adding all layers to the map
+markers.addLayer(pokestopGeoJson);
+markers.addLayer(gymGeoJson);
+markers.addLayer(gymExJson);
+map.addLayer(markers)
+
+// Filter option
+L.control.tagFilterButton({
+        data: ['Pokéstop', 'Arène','Arène EX','none'],
+        filterOnEveryClick: true
+    }).addTo(map);
+
+    //--------------------------------------- S2 Cells ---------------------------------------
 
 /**
  * Function 'drawCells' that calculates then draw
@@ -55,14 +144,39 @@ function getCells(level, colour, boundUp, boundRight) {
     for(let i = 0; i < boundUp; ++i) {
         // Creating lines of cells
         for(let j = 0; j < boundRight; ++j) {
-            // Adding to the array a new polygon (quadrangle) with coordinates and styles
-            polyLayers.push(new L.Polygon(S2.S2Cell.FromHilbertQuadKey(keyToDown).getCornerLatLngs(), {
+            var polygon = new L.Polygon(S2.S2Cell.FromHilbertQuadKey(keyToDown).getCornerLatLngs(), {
                 color: colour,
                 weight: 1,
                 opacity: 1,
                 smoothFactor: 0,
                 fillOpacity: 0
-            }));
+            })
+
+            if(level == 14) {
+                var number = nbPOIinCells.get(keyToDown);
+
+
+                if (number === undefined || number > 20) {
+                    number = 0;
+                } else if (number < 2) {
+                    number = 2 - number;
+                } else if (number < 6) {
+                    number = 6 - number;
+                } else if (number <= 20) {
+                    number = 20 - number;
+                }
+
+                
+                
+                polygon.bindTooltip('<b>'+ number.toString() + '</b>', {
+                    permanent: true, 
+                    direction: "center",
+                    //className: 'myCSSClass'
+                });
+            }
+
+            // Adding to the array a new polygon (quadrangle) with coordinates and styles
+            polyLayers.push(polygon);
 
             // Fetching the neighbor to the right
             keyToDown = S2.latLngToNeighborKeys(S2.keyToLatLng(keyToDown).lat, S2.keyToLatLng(keyToDown).lng, level)[1];
@@ -129,89 +243,7 @@ function checkMoved() {
     }
 }
 
-
-//--------------------------------------- Fullscreen ---------------------------------------
-map.addControl(new L.Control.Fullscreen({
-    position:'topright',		
-}));
-
-//--------------------------------------- Markers' clusters ---------------------------------------
-var markers = L.markerClusterGroup( {
-    disableClusteringAtZoom:16
-});
-
-function changeClustering() {
-    if (map.getZoom() >= disableClusteringAtZoom) {
-        markers.disableClustering(); // New method from sub-plugin.
-    } else {
-        markers.enableClustering(); // New method from sub-plugin.
-    }
-};
-
-// Setting icons parameters
-var MyOwnIcon = L.Icon.extend({
-    options: {
-        iconSize: [30, 30],
-        iconAnchor: [15, 25],
-        popupAnchor: [0, -30] //0,-14 // 4 -29
-    }
-});
-
-var pokestopIcon = new MyOwnIcon({
-        iconUrl: 'images/map_marker_stop.png'}),
-    gymIcon = new MyOwnIcon( {
-        iconUrl: 'images/map_marker_default_01.png'}),
-    gymExIcon = new MyOwnIcon({
-        iconUrl: 'images/map_marker_default_ex_03.png'});
-
-// Common function for popup info
-function onEachFeature(feature, layer) {
-    var lat = feature.geometry.coordinates[1];
-    var lng = feature.geometry.coordinates[0];
-
-    layer.bindPopup('<b>' + feature.properties.typePOI+ '</b><br> '+'<a href="http://www.openstreetmap.org/?mlat=' + lat + '&mlon=' + lng +'&zoom=16&#map=16/'
-    + lat + '/' + lng + '" target="_blank">' + feature.properties.title + '</a>' );
-}
-
-// Fetching every pokestops from the geoJSON file and adding properties
-var pokestopGeoJson = L.geoJson(pokestopsList, {
-    onEachFeature: onEachFeature,
-    pointToLayer: function(feature, latlng) {
-        return L.marker(latlng, {icon: pokestopIcon, tags : ["Pokéstop"]});
-    }
-})
-
-// Fetching every gym from the geoJSON file and adding properties
-var gymGeoJson = L.geoJson(gymsList, {
-    onEachFeature: onEachFeature,
-    pointToLayer: function(feature, latlng) {
-        return L.marker(latlng, {icon: gymIcon, tags : ["Arène"]});
-    }
-})
-
-// Fetching every EX gym from the geoJSON file and adding properties
-var gymExJson = L.geoJson(gymsEXList, {
-    onEachFeature: onEachFeature,
-    pointToLayer: function(feature, latlng) {
-        return L.marker(latlng, {icon: gymExIcon, tags : ["Arène EX"]});
-    }
-})
-
-// Adding all layers to the map
-markers.addLayer(pokestopGeoJson);
-markers.addLayer(gymGeoJson);
-markers.addLayer(gymExJson);
-map.addLayer(markers)
-
-// Filter option
-L.control.tagFilterButton({
-        data: ['Pokéstop', 'Arène','Arène EX','none'],
-        filterOnEveryClick: true
-    }).addTo(map);
-
 // Search option
-
-
 var searchControl = new L.Control.Search( {
     position:'topright',
     layer: markers,
