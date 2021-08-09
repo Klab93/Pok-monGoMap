@@ -66,16 +66,8 @@ var nbPOIinCells = new Map();
 
 // Common function for popup info
 function onEachFeature(feature, layer) {
-    
-
-
     var lat = feature.geometry.coordinates[1];
     var lng = feature.geometry.coordinates[0];
-    
-    $.get('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=' + lat +'&lon=' + lng, function(data){
-        console.log(data.address.road);
-    });
-
 
     layer.bindPopup('<b>' + feature.properties.typePOI+ '</b><br> '+'<a href="http://www.openstreetmap.org/?mlat=' + lat + '&mlon=' + lng +'&zoom=16&#map=16/'
     + lat + '/' + lng + '" target="_blank">' + feature.properties.title + '</a>' );
