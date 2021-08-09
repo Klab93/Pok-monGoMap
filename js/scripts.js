@@ -62,16 +62,26 @@ var pokestopIcon = new MyOwnIcon({
 
 var nbPOIinCells = new Map();
 
+
+
 // Common function for popup info
 function onEachFeature(feature, layer) {
+    
+
+
     var lat = feature.geometry.coordinates[1];
     var lng = feature.geometry.coordinates[0];
+    
+    $.get('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=' + lat +'&lon=' + lng, function(data){
+        console.log(data.address.road);
+    });
+
 
     layer.bindPopup('<b>' + feature.properties.typePOI+ '</b><br> '+'<a href="http://www.openstreetmap.org/?mlat=' + lat + '&mlon=' + lng +'&zoom=16&#map=16/'
     + lat + '/' + lng + '" target="_blank">' + feature.properties.title + '</a>' );
+    feature.properties.title = feature.properties.title + " (#" + feature.properties.uuid + ")";
 
     var it = S2.latLngToKey(lat,lng, 14);
-
     
     if(nbPOIinCells.has(it)) {
         nbPOIinCells.set(it, nbPOIinCells.get(it) + 1);
@@ -342,17 +352,15 @@ var animatedToggle = L.easyButton({
 //--------------------------------------- Fullscreen -------------------------------------
 map.addControl(new L.Control.Fullscreen());
 
-
-// Search option
+//--------------------------------------- Search option -------------------------------------
 var searchControl = new L.Control.Search( {
     layer: markers,
     initial: false,
     zoom: 17,
     marker: false,
     moveToLocation: function(latlng, title, map) {
-        console.log(latlng);
-          map.setView(latlng, 16);
-    },
+        map.setView(latlng, 16);
+    }
 });
 
 searchControl.on('search:locationfound', function(e) {
@@ -361,9 +369,6 @@ searchControl.on('search:locationfound', function(e) {
 });
 
 map.addControl( searchControl );
-
-// Calling the function every second for the cells' mechanism
-//setInterval(checkMoved, 1000);
 
 // Prevent bug of on mobile
 map.tap.disable();
