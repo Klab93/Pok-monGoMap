@@ -31,11 +31,6 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 //--                                   Addons / Nodes                                   --
 //----------------------------------------------------------------------------------------
 
-//--------------------------------------- Fullscreen -------------------------------------
-map.addControl(new L.Control.Fullscreen({
-    position:'topright',		
-}));
-
 //--------------------------------------- Markers' clusters ------------------------------
 var markers = L.markerClusterGroup( {
     disableClusteringAtZoom:16
@@ -116,12 +111,83 @@ markers.addLayer(gymExJson);
 map.addLayer(markers)
 
 // Filter option
-L.control.tagFilterButton({
-        data: ['Pokéstop', 'Arène','Arène EX','none'],
-        filterOnEveryClick: true
-    }).addTo(map);
+var filterPokestop = L.easyButton({
+    id: 'animated-marker-toggle',
+    //type: 'animate',
+    position:'topright',
+    states: [{
+        stateName: 'add-pokestop',
+        icon: '<img src="./images/map_marker_stop.png" style="width:16px">',
+        title: 'Affiche les cellules S14 et S17',
+        onClick: function(control) {
+            markers.removeLayer(pokestopGeoJson);
+            control.state('remove-pokestop');
+        }
+    }, {
+        stateName: 'remove-pokestop',
+        title: 'Cache les cellules S14 et S17',
+        icon: '<img src="./images/map_marker_stop.png" style="width:16px">',
+        onClick: function(control) {
+            markers.addLayer(pokestopGeoJson);
+            control.state('add-pokestop');
+        }
+    }]
+  });
 
-    //--------------------------------------- S2 Cells ---------------------------------------
+  filterPokestop.addTo(map);
+
+  var filterGym = L.easyButton({
+    id: 'animated-marker-toggle',
+    //type: 'animate',
+    position:'topright',
+    states: [{
+        stateName: 'add-gym',
+        icon: '<img src="./images/map_marker_default_01.png" style="width:16px">',
+        title: 'Affiche les cellules S14 et S17',
+        
+        onClick: function(control) {
+            markers.removeLayer(gymGeoJson);
+            control.state('remove-gym');
+        }
+    }, {
+        stateName: 'remove-gym',
+        title: 'Cache les cellules S14 et S17',
+        icon: '<img src="./images/map_marker_default_01.png" style="width:16px">',
+        onClick: function(control) {
+            markers.addLayer(gymGeoJson);
+            control.state('add-gym');
+        }
+    }]
+  });
+
+  filterGym.addTo(map);
+
+  var filterGymEx = L.easyButton({
+    id: 'animated-marker-toggle',
+    //type: 'animate',
+    position:'topright',
+    states: [{
+        stateName: 'add-gymEX',
+        icon: '<img src="./images/map_marker_default_ex_03.png" style="width:16px">',
+        title: 'Affiche les cellules S14 et S17',
+        onClick: function(control) {
+            markers.removeLayer(gymExJson);
+            control.state('remove-gymEX');
+        }
+    }, {
+        stateName: 'remove-gymEX',
+        title: 'Cache les cellules S14 et S17',
+        icon: '<img src="./images/map_marker_default_ex_03.png" style="width:16px">',
+        onClick: function(control) {
+            markers.addLayer(gymExJson);
+            control.state('add-gymEX');
+        }
+    }]
+  });
+
+  filterGymEx.addTo(map);
+
+//--------------------------------------- S2 Cells ---------------------------------------
 
 /**
  * Function 'drawCells' that calculates then draw
@@ -247,6 +313,7 @@ var refreshIntervalId;
 var animatedToggle = L.easyButton({
     id: 'animated-marker-toggle',
     //type: 'animate',
+    position:'topright',
     states: [{
         stateName: 'add-markers',
         icon: '<img src="./images/grid.png" style="width:16px">',
@@ -272,10 +339,12 @@ var animatedToggle = L.easyButton({
 
   animatedToggle.addTo(map);
 
+//--------------------------------------- Fullscreen -------------------------------------
+map.addControl(new L.Control.Fullscreen());
+
 
 // Search option
 var searchControl = new L.Control.Search( {
-    position:'topright',
     layer: markers,
     initial: false,
     zoom: 17,
