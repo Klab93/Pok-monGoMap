@@ -249,8 +249,8 @@ var animatedToggle = L.easyButton({
     //type: 'animate',
     states: [{
         stateName: 'add-markers',
-        icon: '<img src="./images/grid.png" style="width:18px">',
-        title: 'add some markers',
+        icon: '<img src="./images/grid.png" style="width:16px">',
+        title: 'Affiche les cellules S14 et S17',
         onClick: function(control) {
             checkLayer(14, 14, 'red', 18, 28);
             checkLayer(17, 16, 'green', 35, 55);
@@ -259,7 +259,7 @@ var animatedToggle = L.easyButton({
         }
     }, {
         stateName: 'remove-markers',
-        title: 'remove markers',
+        title: 'Cache les cellules S14 et S17',
         icon: '<b>OFF</b>',
         onClick: function(control) {
             clearInterval(refreshIntervalId);
