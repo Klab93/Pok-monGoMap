@@ -249,7 +249,7 @@ var animatedToggle = L.easyButton({
     //type: 'animate',
     states: [{
         stateName: 'add-markers',
-        icon: '<img src="./images/grid.png" style="width:20px">',
+        icon: '<img src="./images/grid.png" style="width:18px">',
         title: 'add some markers',
         onClick: function(control) {
             checkLayer(14, 14, 'red', 18, 28);
