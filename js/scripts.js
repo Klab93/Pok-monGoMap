@@ -1,12 +1,14 @@
 /**
  * @author AliceThunderWind
  * @file scripts.js
- * @brief Configuration of functionalities of the OpenStreetMap map
+ * @brief Configurations of functionalities of the OpenStreetMap map
  */
 
-// --------------------------------------- Initializing ---------------------------------------
+//----------------------------------------------------------------------------------------
+//--                                   Initialization                                   --
+//----------------------------------------------------------------------------------------
 
-// Initializing the map
+// Initializing the map with zooming and centering
 var map = L.map( 'map', {
     center: [46.50, 7.15],
     zoom: 9,
@@ -25,26 +27,36 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     accessToken: 'pk.eyJ1IjoiYWxpY2V0aHVuZGVyd2luZCIsImEiOiJja20xMGpiOWYxZ3d2MnBseTJkdmxoMDZmIn0.ExBMlIL8nyZJ9VoNToP42Q'
 }).addTo(map);
 
+//----------------------------------------------------------------------------------------
+//--                                   Addons / Nodes                                   --
+//----------------------------------------------------------------------------------------
 
-// --------------------------------------- Addons ---------------------------------------
 
-// Cells mechanisms
-function getCells(level, colour, boundUp, boundLeft) {
-    var getCorner = map.getBounds().getNorthWest();
+//--------------------------------------- S2 Cells ---------------------------------------
 
-    var key = S2.latLngToKey(getCorner.lat, getCorner.lng, level);
-    var key2 = S2.latLngToKey(getCorner.lat, getCorner.lng, level);
+/**
+ * Function 'drawCells' that calculates then draw
+ * @param {*} level a level of cells to create (14 or 17)
+ * @param {*} colour a color (red or green) 
+ * @param {*} boundUp number of cells to create vertically
+ * @param {*} boundRight number of cells to create horizontally
+ * @returns an array containing the cells of a specific layer
+ */
+function getCells(level, colour, boundUp, boundRight) {
+    // Getting the top left corner coordinates of the map
+    var topLeftCornerCoordinate = map.getBounds().getNorthWest();
 
-    console.log("hi");
+    // Getting the initial key from coordinates (and adding 0.005 to lat coordinate to adjust with the height of the window)
+    var keyToDown = initialKey = S2.latLngToKey((topLeftCornerCoordinate.lat + 0.007), topLeftCornerCoordinate.lng, level);
+
     var polyLayers = [];
 
+    // Creating columns of cells
     for(let i = 0; i < boundUp; ++i) {
-        var neighbors;
-        key2 = key;
-        for(let j = 0; j < boundLeft; ++j) {
-            var temp = S2.S2Cell.FromHilbertQuadKey(key2).getCornerLatLngs();
-
-            polyLayers.push(new L.Polygon(temp, {
+        // Creating lines of cells
+        for(let j = 0; j < boundRight; ++j) {
+            // Adding to the array a new polygon (quadrangle) with coordinates and styles
+            polyLayers.push(new L.Polygon(S2.S2Cell.FromHilbertQuadKey(keyToDown).getCornerLatLngs(), {
                 color: colour,
                 weight: 1,
                 opacity: 1,
@@ -52,37 +64,25 @@ function getCells(level, colour, boundUp, boundLeft) {
                 fillOpacity: 0
             }));
 
-            var test = S2.keyToLatLng(key2)
-
-            neighbors = S2.latLngToNeighborKeys(test.lat, test.lng, level);
-            
-            key2 = neighbors[1];
+            // Fetching the neighbor to the right
+            keyToDown = S2.latLngToNeighborKeys(S2.keyToLatLng(keyToDown).lat, S2.keyToLatLng(keyToDown).lng, level)[1];
         }
-        var test2 = S2.keyToLatLng(key)
-        neighbors = S2.latLngToNeighborKeys(test2.lat, test2.lng, level);
-        key = neighbors[0];
-
+        // Fetching the neighbor to the bottom for the next line
+        
+        // Setting new line of cells to create
+        keyToDown = initialKey = S2.latLngToNeighborKeys(S2.keyToLatLng(initialKey).lat, S2.keyToLatLng(initialKey).lng, level)[0];
     }
-
     return polyLayers;
 }
 
-var isLayered14 = false;
-var isLayered17 = false;
-var isCoordDifferent = false;
-var previousCoords = {
-    lat : 0,
-    lng : 0
-};
+// Initializing for the first iteration
 var cellslvl14 = new L.FeatureGroup();
 var cellslvl17 = new L.FeatureGroup();
 
-function checkZoom(layer, cellZoom, color, heightCells, widthCells, isCoordDifferent) {
-    var tempBool = (cellZoom == 14) ? isLayered14 : isLayered17;
-
+function checkLayer(layer, cellZoom, color, heightCells, widthCells) {
+    
     if(map.getZoom() >= cellZoom) {
         if(layer == 14) {
-            isLayered14 = true;
             map.removeLayer(cellslvl14);
             cellslvl14 = new L.FeatureGroup();
             var layerCell = getCells(layer, color, heightCells, widthCells);
@@ -91,7 +91,6 @@ function checkZoom(layer, cellZoom, color, heightCells, widthCells, isCoordDiffe
             }
             map.addLayer(cellslvl14);
         } else if (layer == 17) {
-            isLayered17 = true;
             map.removeLayer(cellslvl17);
             cellslvl17 = new L.FeatureGroup();
             var layerCell = getCells(layer, color, heightCells, widthCells);
@@ -99,36 +98,44 @@ function checkZoom(layer, cellZoom, color, heightCells, widthCells, isCoordDiffe
                 cellslvl17.addLayer(cell);
             }
             map.addLayer(cellslvl17);
-            cellslvl17.bringToBack()
+            cellslvl17.bringToBack();
         }
-
-    } else if(map.getZoom() < cellZoom && tempBool ) {
-        if(layer == 14) {
-            isLayered14 = false;
+    } else {
+        if(map.getZoom() < 14 && map.hasLayer(cellslvl14) ) {
             map.removeLayer(cellslvl14);
-        } else if (layer == 17) {
-            isLayered17 = false;
-            map.removeLayer(cellslvl17);
         }
         
+        if(map.getZoom() < 17 && map.hasLayer(cellslvl17)) {
+            map.removeLayer(cellslvl17);
+        }
     }
 }
 
-function setLayer() {
-    if(previousCoords.lat != map.getBounds().getNorthWest().lat || previousCoords.lng != map.getBounds().getNorthWest().lng) {
-        checkZoom(14, 14, 'red', 15, 25);
-        checkZoom(17, 16, 'green', 25, 50);
+// Initializing for the first iteration
+var previousCoords = {
+    lat : 0,
+    lng : 0
+};
 
+/**
+ * Function that checks if the map can set the layer of cells S2
+ */
+function checkMoved() {
+    // checking first if the map was moved
+    if(previousCoords.lat != map.getBounds().getNorthWest().lat || previousCoords.lng != map.getBounds().getNorthWest().lng) {
+        checkLayer(14, 14, 'red', 18, 28);
+        checkLayer(17, 16, 'green', 35, 55);
         previousCoords = map.getBounds().getNorthWest();
     }
 }
 
-// Fullscreen functionality
+
+//--------------------------------------- Fullscreen ---------------------------------------
 map.addControl(new L.Control.Fullscreen({
     position:'topright',		
 }));
 
-// Clusters functionality
+//--------------------------------------- Markers' clusters ---------------------------------------
 var markers = L.markerClusterGroup( {
     disableClusteringAtZoom:16
 });
@@ -144,9 +151,9 @@ function changeClustering() {
 // Setting icons parameters
 var MyOwnIcon = L.Icon.extend({
     options: {
-        iconSize: [29, 29],
-        iconAnchor: [9, 21],
-        popupAnchor: [0, -14]
+        iconSize: [30, 30],
+        iconAnchor: [15, 25],
+        popupAnchor: [0, -30] //0,-14 // 4 -29
     }
 });
 
@@ -203,8 +210,9 @@ L.control.tagFilterButton({
     }).addTo(map);
 
 // Search option
-var searchControl = new L.Control.Search(
-{
+
+
+var searchControl = new L.Control.Search( {
     position:'topright',
     layer: markers,
     initial: false,
@@ -213,21 +221,18 @@ var searchControl = new L.Control.Search(
     moveToLocation: function(latlng, title, map) {
         console.log(latlng);
           map.setView(latlng, 16);
-    }});
+    },
+});
 
 searchControl.on('search:locationfound', function(e) {
     e.layer.openPopup();
-}).on('search:collapsed', function(e) {
 
-    featuresLayer.eachLayer(function(layer) {
-        featuresLayer.resetStyle(layer);
-    });	
 });
 
 map.addControl( searchControl );
 
 // Calling the function every second for the cells' mechanism
-setInterval(setLayer, 1000);
+setInterval(checkMoved, 1000);
 
 // Prevent bug of on mobile
 map.tap.disable();
