@@ -31,7 +31,7 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 //--                                   Addons / Nodes                                   --
 //----------------------------------------------------------------------------------------
 
-//--------------------------------------- Markers' clusters ------------------------------
+//----------------------------------- Markers' clusters ----------------------------------
 var markers = L.markerClusterGroup( {
     disableClusteringAtZoom:16
 });
@@ -62,8 +62,6 @@ var pokestopIcon = new MyOwnIcon({
 
 var nbPOIinCells = new Map();
 
-
-
 // Common function for popup info
 function onEachFeature(feature, layer) {
     var lat = feature.geometry.coordinates[1];
@@ -75,6 +73,8 @@ function onEachFeature(feature, layer) {
 
     var it = S2.latLngToKey(lat,lng, 14);
     
+    var isGym = (feature.properties.typePOI == "Arène" || feature.properties.typePOI == "Arène EX") ? 1 : 0;
+    console.log(isGym);
     if(nbPOIinCells.has(it)) {
         nbPOIinCells.set(it, nbPOIinCells.get(it) + 1);
     } else {
@@ -120,15 +120,15 @@ var filterPokestop = L.easyButton({
     states: [{
         stateName: 'add-pokestop',
         icon: '<img src="./images/map_marker_stop.png" style="width:16px">',
-        title: 'Affiche les cellules S14 et S17',
+        title: 'Affiche les pokéstops',
         onClick: function(control) {
             markers.removeLayer(pokestopGeoJson);
             control.state('remove-pokestop');
         }
     }, {
         stateName: 'remove-pokestop',
-        title: 'Cache les cellules S14 et S17',
-        icon: '<img src="./images/map_marker_stop.png" style="width:16px">',
+        title: 'Cache les pokéstops',
+        icon: '<img src="./images/map_marker_stop_off.png" style="width:16px">',
         onClick: function(control) {
             markers.addLayer(pokestopGeoJson);
             control.state('add-pokestop');
@@ -145,7 +145,7 @@ var filterPokestop = L.easyButton({
     states: [{
         stateName: 'add-gym',
         icon: '<img src="./images/map_marker_default_01.png" style="width:16px">',
-        title: 'Affiche les cellules S14 et S17',
+        title: 'Affiche les arènes',
         
         onClick: function(control) {
             markers.removeLayer(gymGeoJson);
@@ -153,8 +153,8 @@ var filterPokestop = L.easyButton({
         }
     }, {
         stateName: 'remove-gym',
-        title: 'Cache les cellules S14 et S17',
-        icon: '<img src="./images/map_marker_default_01.png" style="width:16px">',
+        title: 'Cache les arènes',
+        icon: '<img src="./images/map_marker_default_01_off.png" style="width:16px">',
         onClick: function(control) {
             markers.addLayer(gymGeoJson);
             control.state('add-gym');
@@ -171,15 +171,15 @@ var filterPokestop = L.easyButton({
     states: [{
         stateName: 'add-gymEX',
         icon: '<img src="./images/map_marker_default_ex_03.png" style="width:16px">',
-        title: 'Affiche les cellules S14 et S17',
+        title: 'Affiche les arènes EX',
         onClick: function(control) {
             markers.removeLayer(gymExJson);
             control.state('remove-gymEX');
         }
     }, {
         stateName: 'remove-gymEX',
-        title: 'Cache les cellules S14 et S17',
-        icon: '<img src="./images/map_marker_default_ex_03.png" style="width:16px">',
+        title: 'Cache les arènes EX',
+        icon: '<img src="./images/map_marker_default_ex_03_off.png" style="width:16px">',
         onClick: function(control) {
             markers.addLayer(gymExJson);
             control.state('add-gymEX');
@@ -192,7 +192,7 @@ var filterPokestop = L.easyButton({
 //--------------------------------------- S2 Cells ---------------------------------------
 
 /**
- * Function 'drawCells' that calculates then draw
+ * Function 'getCells' that calculates then draw
  * @param {*} level a level of cells to create (14 or 17)
  * @param {*} colour a color (red or green) 
  * @param {*} boundUp number of cells to create vertically
@@ -203,7 +203,7 @@ function getCells(level, colour, boundUp, boundRight) {
     // Getting the top left corner coordinates of the map
     var topLeftCornerCoordinate = map.getBounds().getNorthWest();
 
-    // Getting the initial key from coordinates (and adding 0.005 to lat coordinate to adjust with the height of the window)
+    // Getting the initial key from coordinates (and adding 0.007 to lat coordinate to adjust with the height of the window)
     var keyToDown = initialKey = S2.latLngToKey((topLeftCornerCoordinate.lat + 0.007), topLeftCornerCoordinate.lng, level);
 
     var polyLayers = [];
@@ -223,7 +223,6 @@ function getCells(level, colour, boundUp, boundRight) {
             if(level == 14) {
                 var number = nbPOIinCells.get(keyToDown);
 
-                
                 if(number != undefined){
                     if (number < 2) {
                         number = 2 - number;
@@ -248,9 +247,7 @@ function getCells(level, colour, boundUp, boundRight) {
             // Fetching the neighbor to the right
             keyToDown = S2.latLngToNeighborKeys(S2.keyToLatLng(keyToDown).lat, S2.keyToLatLng(keyToDown).lng, level)[1];
         }
-        // Fetching the neighbor to the bottom for the next line
-        
-        // Setting new line of cells to create
+        // Fetching the neighbor to the bottom for the next line & setting new line of cells to create
         keyToDown = initialKey = S2.latLngToNeighborKeys(S2.keyToLatLng(initialKey).lat, S2.keyToLatLng(initialKey).lng, level)[0];
     }
     return polyLayers;
@@ -261,7 +258,6 @@ var cellslvl14 = new L.FeatureGroup();
 var cellslvl17 = new L.FeatureGroup();
 
 function checkLayer(layer, cellZoom, color, heightCells, widthCells) {
-    
     if(map.getZoom() >= cellZoom) {
         if(layer == 14) {
             map.removeLayer(cellslvl14);
@@ -318,7 +314,7 @@ var animatedToggle = L.easyButton({
     position:'topright',
     states: [{
         stateName: 'add-markers',
-        icon: '<img src="./images/grid.png" style="width:16px">',
+        icon: '<img src="./images/grid_off.png" style="width:16px">',
         title: 'Affiche les cellules S14 et S17',
         onClick: function(control) {
             checkLayer(14, 14, 'red', 18, 28);
@@ -329,7 +325,8 @@ var animatedToggle = L.easyButton({
     }, {
         stateName: 'remove-markers',
         title: 'Cache les cellules S14 et S17',
-        icon: '<b>OFF</b>',
+        //icon: '<b>OFF</b>',
+        icon: '<img src="./images/grid.png" style="width:16px">',
         onClick: function(control) {
             clearInterval(refreshIntervalId);
             map.removeLayer(cellslvl14);

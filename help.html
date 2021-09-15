@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Pokémon GO Map - Suisse romande</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+       
+
+    </head>
+    <body>
+        <!-- Responsive navbar-->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">Pokémon GO - Map</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Discord</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Plus</a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="./help.html">Aide</a></li>
+                                <li><a class="dropdown-item" href="./about.html">À propos</a></li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li><a class="dropdown-item" href="#">Bientôt</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Page content-->
+        <div class="container">
+            <div class="text-center mt-5">
+                <h1>Aide à propos de la carte</h1>
+                <p class="lead">Pour une meilleure compréhension de la carte et de ses fonctionnalités</p>
+                <!--<p><i></i></p>-->
+                <p class="body-help">À l'heure actuelle, il existe plus de 26'600 points d'intérets (appelés ci-après POI) dans les 5 cantons de la Suisse romande que sont Vaud, Genève, Fribourg, Neuchâtel et Valais. 
+                    Pour des questions de fluidité (et parce qu'il existe à ce jour, plus de 26'600 POI toute la Suisse Romande), les POI sont regroupés géographiquement par des cercles de différentes couleurs (de vert à rouge selon leur densité).
+                    Pour voir individuellement ces POI, il suffit d'agrandir la carte.</p>
+                <h2 class="body-help">Légende de la carte</h2>
+                <ul class="body-help">
+                    <li><img src="./images/map_marker_stop.png" alt="Icône pokéstop"> : Représente un pokéstop</li>
+                    <li><img src="./images/map_marker_default_01.png" alt="Icône arène"> : Représente une arène</li>
+                    <li><img src="./images/map_marker_default_ex_03.png" alt="Icône arène EX"> : Représente une arène EX</li>
+                </ul>
+                <p class="body-help">
+
+                    Il existe plusieurs boutons à disposition :
+                    <ul class="body-help">
+                        <li>Bouton <b>"Loupe"</b> : Permet de rechercher un POI par son nom (ou de son identifiant n°)</li>
+                        <li>Bouton <b>"Pokéstop" bleu clair</b> : Permet d'afficher ou non les pokéstops</li>
+                        <li>Bouton <b>"Arène" bleu foncé</b> : Permet d'afficher ou non des arènes</li>
+                        <li>Bouton <b>"Arène EX" gris</b> : Permet d'afficher ou non des arènes EX</li>
+                        <li>Bouton <b>"Grille"</b> : Permet d'afficher ou non la grille représentant les cellules S2 (voir les explications en-dessous). Le nombre dans les cases rouges indique le nombre de pokéstop restant avant l'apparition d'une nouvelle arène</li>
+                    </ul>
+                </p>
+                
+                <h2 class="body-help">Explications des cellules "S2"</h2>
+                <p class="body-help">
+                    La carte du monde peut être découpée sous forme de quadrilatères (généralement des lozanges) que l'on appelle des cellules.</br>
+                    </p>
+                    <img class="body-help" src="./images/Example_cells_14.jpg" alt="Icône pokéstop" width=600></br>
+                    <i>Ci-dessus un exemple des cellules S14 . Afin de visualiser ces niveaux de cellules, le site de <a href="https://s2.sidewalklabs.com/regioncoverer/">sidewalklabs</a> peut vous être utile.</i></br></br>
+                    <p class="body-help">
+                    Ce sont les cellules "S2" qui déterminent l'apparition ou non d'un POI dans le jeu "<i>Pokémon GO</i>". Dans ce jeu, deux niveaux de cellules sont importantes : </br></br>
+                    <b>Cellules S14 (ou niveau 14)</b></br>
+                    Les cellules S14, représentées par des quadrilatères rouges sur la carte, permettent de déterminer le nombre d'arènes en fonction du nombre de POI dans ces cellules. Cela suit le schéma suivant :
+                    <ul class="body-help">
+                        <li>Au bout de <b>2 POI</b>, une arène apparaît</li>
+                        <li>Au bout de <b>6 POI</b>, une 2e arène apparaît</li>
+                        <li>Au bout de <b>20 POI</b>, une 3e arène apparaît</li>
+                    </ul>
+                    </p>
+                    <p class="body-help">
+                    <i>Il existe néanmoins des exceptions où l'on peut retrouver plus de trois arènes dans une cellule S14.</i></br></br>
+                    <b>Cellules S17 (ou niveau 17)</b></br>
+                    Les cellules S17, représentées par des quadrilatères verts sur la carte, permettent de déterminer le nombre de POI. Généralement, il n'existe qu'un pokéstop, ou arène, ou arène EX dans ces cellules mais il arrive d'en trouver plusieurs dans une même cellule S17.
+                </p>    
+                </br>
+                <h2 class="body-help">FAQ</h2>
+                <p class="body-help"><b>À quelle fréquence la carte sera-t-elle mise à jour ?</b></br>
+                Environ tous les mois</p>
+                </br>        
+            </div>
+        </div>
+        <!--Fichiers Javascript-->
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>
