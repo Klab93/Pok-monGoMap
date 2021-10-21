@@ -74,7 +74,7 @@ function onEachFeature(feature, layer) {
     var it = S2.latLngToKey(lat,lng, 14);
     
     var isGym = (feature.properties.typePOI == "Arène" || feature.properties.typePOI == "Arène EX") ? 1 : 0;
-    console.log(isGym);
+
     if(nbPOIinCells.has(it)) {
         nbPOIinCells.set(it, nbPOIinCells.get(it) + 1);
     } else {
