@@ -1,25 +1,59 @@
 {
-  "name": "pokemongomap",
-  "version": "0.0.1",
-  "description": "A swiss map",
-  "main": "js/scripts.js",
+  "name": "pokemon-map",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/AliceThunderWind/Pok-monGoMap.git"
-  },
-  "author": "AliceThunderWind",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/AliceThunderWind/Pok-monGoMap/issues"
-  },
-  "homepage": "https://github.com/AliceThunderWind/Pok-monGoMap#readme",
   "dependencies": {
+    "core-js": "^3.6.5",
+    "json-loader": "^0.5.7",
     "leaflet": "^1.7.1",
-    "leaflet-search": "^2.9.9",
-    "leaflet-tag-filter-button": "0.0.5",
-    "s2-geometry": "^1.2.10"
-  }
+    "leaflet-easybutton": "^2.4.0",
+    "leaflet-search": "^3.0.2",
+    "leaflet.fullscreen": "^2.2.0",
+    "leaflet.markercluster": "^1.5.3",
+    "mapbox-gl": "^2.7.0",
+    "s2-geometry": "^1.2.10",
+    "vue": "^3.0.0",
+    "vue-router": "^4.0.0-0",
+    "vuex": "^4.0.0-0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-plugin-vuex": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/compiler-sfc": "^3.0.0",
+    "@vue/eslint-config-standard": "^5.1.2",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "eslint-plugin-vue": "^7.0.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/vue3-essential",
+      "@vue/standard"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
 }
