@@ -30,12 +30,7 @@ export default {
     }
   },
   mounted () {
-    var map = L.map('mapContainer', {
-      fullscreenControl: true,
-      fullscreenControlOptions: {
-        position: 'topleft'
-      }
-    }).setView([46.50, 7.15], 9)
+    var map = L.map('mapContainer').setView([46.50, 7.15], 9)
     /*
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
       attribution:
@@ -347,6 +342,8 @@ export default {
     })
 
     animatedToggle.addTo(map)
+
+    map.addControl(new L.Control.FullScreen())
 
     // --------------------------------------- Search option -------------------------------------
     var searchControl = new L.Control.Search({
