@@ -359,10 +359,10 @@ export default {
     })
 
     map.addControl(searchControl)
-    
+
     map.addControl(new L.Control.FullScreen())
     // Prevent bug of on mobile
-    // map.tap.disable()
+    map.tap.disable()
   }
 }
 </script>
