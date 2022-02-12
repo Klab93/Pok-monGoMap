@@ -343,6 +343,13 @@ export default {
 
     animatedToggle.addTo(map)
 
+    // Prevent bug of on mobile
+    if (L.Browser.mobile) {
+      map.tap.disable()
+    } else {
+      map.addControl(new L.Control.FullScreen())
+    }
+
     // --------------------------------------- Search option -------------------------------------
     var searchControl = new L.Control.Search({
       layer: markers,
@@ -359,9 +366,6 @@ export default {
     })
 
     map.addControl(searchControl)
-
-    // Prevent bug of on mobile
-    map.tap.disable()
   }
 }
 </script>
