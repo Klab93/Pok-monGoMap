@@ -343,8 +343,6 @@ export default {
 
     animatedToggle.addTo(map)
 
-    map.addControl(new L.Control.FullScreen())
-
     // --------------------------------------- Search option -------------------------------------
     var searchControl = new L.Control.Search({
       layer: markers,
@@ -361,7 +359,8 @@ export default {
     })
 
     map.addControl(searchControl)
-
+    
+    map.addControl(new L.Control.FullScreen())
     // Prevent bug of on mobile
     // map.tap.disable()
   }
