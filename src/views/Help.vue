@@ -43,7 +43,7 @@
       <br>
       <h2 class="body-help">FAQ</h2>
       <p class="body-help"><b>À quelle fréquence la carte sera-t-elle mise à jour ?</b><br>
-      Environ tous les mois</p>
+      Environ tous les mois, potentiellement plus</p>
       <br>
     </div>
   </div>
