@@ -74,8 +74,7 @@ export default {
       var lng = feature.geometry.coordinates[0]
 
       layer.bindPopup('<b>' + feature.properties.typePOI + '</b><br> ' + '<a href="http://www.openstreetmap.org/?mlat=' + lat +
-      '&mlon=' + lng + '&zoom=16&#map=16/' + lat + '/' + lng + '" target="_blank">' + feature.properties.title + '</a>')
-      feature.properties.title = feature.properties.title + ' (#' + feature.properties.uuid + ')'
+      '&mlon=' + lng + '&zoom=16&#map=16/' + lat + '/' + lng + '" target="_blank">' + feature.properties.uuid + '</a>')
 
       var it = S2.latLngToKey(lat, lng, 14)
 
