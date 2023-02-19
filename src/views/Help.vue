@@ -4,7 +4,7 @@
       <h1>Aide à propos de la carte</h1>
       <p class="lead">Pour une meilleure compréhension de la carte et de ses fonctionnalités</p>
       <p class="body-help">
-        À l'heure actuelle, il existe plus de 25'000 points d'intérets (appelés ci-après POI) dans les 5 cantons de la Suisse romande que sont Vaud, Genève, Fribourg, Neuchâtel et Valais.
+        À l'heure actuelle, il existe plus de 25'000 points d'intérets (appelés ci-après POI) dans les 6 cantons de la Suisse romande que sont Vaud, Genève, Fribourg, Neuchâtel, Jura et Valais.
         Pour des questions de fluidité face à ce grand nombre de POI, ceux-ci sont regroupés géographiquement par des cercles de différentes couleurs (de vert à rouge selon leur densité).
         Pour voir individuellement ces POI, il suffit d'agrandir la carte.</p>
       <h2 class="body-help">Légende de la carte</h2>
