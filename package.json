@@ -17,6 +17,7 @@
     "leaflet.markercluster": "^1.5.3",
     "mapbox-gl": "^2.7.0",
     "s2-geometry": "^1.2.10",
+    "supercluster": "^7.1.5",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0"

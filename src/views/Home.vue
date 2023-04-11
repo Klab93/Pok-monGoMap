@@ -78,8 +78,6 @@ export default {
 
       var it = S2.latLngToKey(lat, lng, 14)
 
-      // var isGym = (feature.properties.typePOI === 'Arène' || feature.properties.typePOI === 'Arène EX') ? 1 : 0
-
       if (nbPOIinCells.has(it)) {
         nbPOIinCells.set(it, nbPOIinCells.get(it) + 1)
       } else {
@@ -90,7 +88,7 @@ export default {
     // Fetching every pokestops from the geoJSON file and adding properties
     var pokestopGeoJson = L.geoJson(pokestopsList, {
       onEachFeature: onEachFeature,
-      pointToLayer: function (feature, latlng) {
+      pointToLayer: function (_feature, latlng) {
         return L.marker(latlng, { icon: pokestopIcon, tags: ['Pokéstop'] })
       }
     })
@@ -98,7 +96,7 @@ export default {
     // Fetching every gym from the geoJSON file and adding properties
     var gymGeoJson = L.geoJson(gymsList, {
       onEachFeature: onEachFeature,
-      pointToLayer: function (feature, latlng) {
+      pointToLayer: function (_feature, latlng) {
         return L.marker(latlng, { icon: gymIcon, tags: ['Arène'] })
       }
     })
@@ -106,7 +104,7 @@ export default {
     // Fetching every EX gym from the geoJSON file and adding properties
     var gymExJson = L.geoJson(gymsEXList, {
       onEachFeature: onEachFeature,
-      pointToLayer: function (feature, latlng) {
+      pointToLayer: function (_feature, latlng) {
         return L.marker(latlng, { icon: gymExIcon, tags: ['Arène EX'] })
       }
     })
@@ -117,80 +115,51 @@ export default {
     markers.addLayer(gymExJson)
     map.addLayer(markers)
 
-    // Filter option
-    var filterPokestop = L.easyButton({
-      id: 'animated-marker-toggle',
-      // type: 'animate',
-      position: 'topright',
-      states: [{
-        stateName: 'add-pokestop',
-        icon: '<img src="./images/map_marker_stop.png" style="width:16px">',
-        title: 'Affiche les pokéstops',
-        onClick: function (control) {
-          markers.removeLayer(pokestopGeoJson)
-          control.state('remove-pokestop')
-        }
-      }, {
-        stateName: 'remove-pokestop',
-        title: 'Cache les pokéstops',
-        icon: '<img src="./images/map_marker_stop_off.png" style="width:16px">',
-        onClick: function (control) {
-          markers.addLayer(pokestopGeoJson)
-          control.state('add-pokestop')
-        }
-      }]
-    })
+    // ----------------------------------------------------------------------------------------
+    // -------------------------------------- Filtering ---------------------------------------
+    // ----------------------------------------------------------------------------------------
 
+    function createState (stateName, image, title, onClickFunction) {
+      return {
+        stateName: stateName,
+        icon: '<img src= "./images/' + image + '" style="width:16px">',
+        title: title,
+        onClick: onClickFunction
+      }
+    }
+
+    function createFilterButton (name, imageOn, imageOff, dataset) {
+      var titleAdd = 'Affiche les ' + name
+      var titleRemove = 'Cache les ' + name
+
+      name = name === 'arènes EX' ? 'arènesEx' : name
+
+      var stateAdd = 'add-' + name
+      var stateRemove = 'remove-' + name
+
+      return L.easyButton({
+        id: 'animated-marker-toggle',
+        position: 'topright',
+        states: [
+          createState(stateAdd, imageOn, titleAdd, function (control) {
+            markers.removeLayer(dataset)
+            control.state(stateRemove)
+          }),
+          createState(stateRemove, imageOff, titleRemove, function (control) {
+            markers.addLayer(dataset)
+            control.state(stateAdd)
+          })
+        ]
+      })
+    }
+
+    var filterPokestop = createFilterButton('pokéstops', 'map_marker_stop.png', 'map_marker_stop_off.png', pokestopGeoJson)
     filterPokestop.addTo(map)
 
-    var filterGym = L.easyButton({
-      id: 'animated-marker-toggle',
-      // type: 'animate',
-      position: 'topright',
-      states: [{
-        stateName: 'add-gym',
-        icon: '<img src="./images/map_marker_default_01.png" style="width:16px">',
-        title: 'Affiche les arènes',
-        onClick: function (control) {
-          markers.removeLayer(gymGeoJson)
-          control.state('remove-gym')
-        }
-      }, {
-        stateName: 'remove-gym',
-        title: 'Cache les arènes',
-        icon: '<img src="./images/map_marker_default_01_off.png" style="width:16px">',
-        onClick: function (control) {
-          markers.addLayer(gymGeoJson)
-          control.state('add-gym')
-        }
-      }]
-    })
-
+    var filterGym = createFilterButton('arènes', 'map_marker_default_01.png', 'map_marker_default_01_off.png', gymGeoJson)
     filterGym.addTo(map)
 
-    var filterGymEx = L.easyButton({
-      id: 'animated-marker-toggle',
-      // type: 'animate',
-      position: 'topright',
-      states: [{
-        stateName: 'add-gymEX',
-        icon: '<img src="./images/map_marker_default_ex_03.png" style="width:16px">',
-        title: 'Affiche les arènes EX',
-        onClick: function (control) {
-          markers.removeLayer(gymExJson)
-          control.state('remove-gymEX')
-        }
-      }, {
-        stateName: 'remove-gymEX',
-        title: 'Cache les arènes EX',
-        icon: '<img src="./images/map_marker_default_ex_03_off.png" style="width:16px">',
-        onClick: function (control) {
-          markers.addLayer(gymExJson)
-          control.state('add-gymEX')
-        }
-      }]
-    })
-
+    var filterGymEx = createFilterButton('arènes EX', 'map_marker_default_ex_03.png', 'map_marker_default_ex_03_off.png', gymExJson)
     filterGymEx.addTo(map)
 
     // --------------------------------------- S2 Cells ---------------------------------------
@@ -348,7 +317,7 @@ export default {
       initial: false,
       zoom: 17,
       marker: false,
-      moveToLocation: function (latlng, title, map) {
+      moveToLocation: function (latlng, _title, map) {
         map.setView(latlng, 16)
       }
     })
