@@ -188,14 +188,10 @@ export default {
       for (let i = 0; i < boundUp; ++i) {
         // Creating lines of cells
         for (let j = 0; j < boundRight; ++j) {
-          var fillColor = '#ffffff'
-          var fillOpacity = 0
-          if (level === 17) {
-            if (cellS17Ids.has(keyToDown)) {
-              fillColor = '#000000'
-              fillOpacity = 0.5
-            }
-          }
+          var isOccupied = (level === 17 && cellS17Ids.has(keyToDown))
+
+          var fillColor = isOccupied ? '#000000' : '#ffffff'
+          var fillOpacity = isOccupied ? 0.5 : 0
 
           var polygon = new L.Polygon(S2.S2Cell.FromHilbertQuadKey(keyToDown).getCornerLatLngs(), {
             color: colour,
@@ -222,7 +218,6 @@ export default {
               polygon.bindTooltip('<b>' + number.toString() + '</b>', {
                 permanent: true,
                 direction: 'center'
-                // className: 'myCSSClass'
               })
             }
           }
