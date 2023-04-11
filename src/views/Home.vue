@@ -67,6 +67,7 @@ export default {
     var gymExIcon = new MyOwnIcon({ iconUrl: './images/map_marker_default_ex_03.png' })
 
     var nbPOIinCells = new Map()
+    var cellS17Ids = new Set()
 
     // Common function for popup info
     function onEachFeature (feature, layer) {
@@ -77,6 +78,8 @@ export default {
       '&mlon=' + lng + '&zoom=16&#map=16/' + lat + '/' + lng + '" target="_blank">' + feature.properties.uuid + '</a>')
 
       var it = S2.latLngToKey(lat, lng, 14)
+
+      cellS17Ids.add(S2.latLngToKey(lat, lng, 17))
 
       if (nbPOIinCells.has(it)) {
         nbPOIinCells.set(it, nbPOIinCells.get(it) + 1)
@@ -185,12 +188,22 @@ export default {
       for (let i = 0; i < boundUp; ++i) {
         // Creating lines of cells
         for (let j = 0; j < boundRight; ++j) {
+          var fillColor = '#ffffff'
+          var fillOpacity = 0
+          if (level === 17) {
+            if (cellS17Ids.has(keyToDown)) {
+              fillColor = '#000000'
+              fillOpacity = 0.5
+            }
+          }
+
           var polygon = new L.Polygon(S2.S2Cell.FromHilbertQuadKey(keyToDown).getCornerLatLngs(), {
             color: colour,
+            fillColor: fillColor,
             weight: 1,
             opacity: 1,
             smoothFactor: 0,
-            fillOpacity: 0
+            fillOpacity: fillOpacity
           })
 
           if (level === 14) {
@@ -243,6 +256,7 @@ export default {
         } else if (layer === 17) {
           map.removeLayer(cellslvl17)
           cellslvl17 = new L.FeatureGroup()
+
           const layerCell = getCells(layer, color, heightCells, widthCells)
           for (const cell of layerCell) {
             cellslvl17.addLayer(cell)
